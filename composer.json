@@ -1,6 +1,6 @@
 {
-    "name": "agp/modelo",
-    "description": "Pacote modelo de Package",
+    "name": "agp/webhook",
+    "description": "Package Laravel para disparo de webhooks.",
     "license": "MIT",
     "type": "library",
     "authors": [
@@ -10,18 +10,21 @@
         }
     ],
     "require": {
-        "php": ">=7.3"
+        "php": ">=7.3",
+        "agp/log": "^1.0",
+        "agp/base-utils": "^1.0"
     },
     "minimum-stability": "dev",
+    "prefer-stable": true,
     "autoload": {
         "psr-0": {
-            "Agp\\Modelo": "src/"
+            "Agp\\Webhook": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Agp\\Modelo\\AgpModeloServiceProvider"
+              "AgpWebhookServiceProvider"
             ]
         }
     }
