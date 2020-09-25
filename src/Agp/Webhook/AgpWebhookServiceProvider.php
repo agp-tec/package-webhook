@@ -15,5 +15,6 @@ class AgpWebhookServiceProvider extends ServiceProvider
 
     public function register()
     {
+
     }
 }
