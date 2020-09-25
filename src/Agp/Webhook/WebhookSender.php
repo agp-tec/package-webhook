@@ -1,11 +1,12 @@
 <?php
 
 
-namespace App\Utils;
+namespace Agp\Webhook;
 
 
 use Agp\Log\Jobs\LogJob;
-use App\Model\Repository\WebhookRepository;
+use Agp\Log\Log;
+use Agp\Webhook\Model\Repository\WebhookRepository;
 use HttpException;
 use Illuminate\Support\Facades\Http;
 

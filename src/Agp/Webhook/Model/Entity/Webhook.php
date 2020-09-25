@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Http;
 
 class Webhook extends \Agp\BaseUtils\Model\Entity\BaseModel
 {
-    protected $table = "pag_webhook";
+    protected $table;
     public $timestamps = false;
     protected $fillable = [
         "adm_empresa_id",
@@ -54,75 +54,82 @@ class Webhook extends \Agp\BaseUtils\Model\Entity\BaseModel
         "webhookEventos",
     ];
 
-   public function webhookEventos()
-   {
-       return $this->hasMany('Agp\Webhook\Model\Entity\WebhookEvento', 'adm_webhook_id');
-   }
+    public function __construct(array $attributes = [])
+    {
+        $this->table = config('webhook.entidade');
 
-   public function push()
-   {
-       $this->save();
-   }
+        parent::__construct($attributes);
+    }
+
+    public function webhookEventos()
+    {
+        return $this->hasMany('Agp\Webhook\Model\Entity\WebhookEvento', 'adm_webhook_id');
+    }
+
+    public function push()
+    {
+        $this->save();
+    }
 
     public function save(array $options = [])
-   {
-       $app = config('webhook.id_app');
-       if (!$app)
-           throw new \Exception('APP não informado.');
+    {
+        $app = config('webhook.id_app');
+        if (!$app)
+            throw new \Exception('APP não informado.');
 
-       $url = config('webhook.api_agpadmin');
-       if (!$url)
-           throw new \Exception('URL não informado.');
-       $url .= '/webhook';
+        $url = config('webhook.api_agpadmin');
+        if (!$url)
+            throw new \Exception('URL não informado.');
+        $url .= '/webhook';
 
-       if (!auth()->check())
-           throw new \Exception('USUARIO não logado.');
+        if (!auth()->check())
+            throw new \Exception('USUARIO não logado.');
 
-       $adm_empresa_id = auth()->user()->getAdmEmpresaId();
-       if (!$adm_empresa_id)
-           throw new \Exception('EMPRESA não informado.');
+        $adm_empresa_id = auth()->user()->getAdmEmpresaId();
+        if (!$adm_empresa_id)
+            throw new \Exception('EMPRESA não informado.');
 
         $this->adm_empresa_id = $adm_empresa_id;
         $this->adm_aplicativo_id = $app;
 
         $headers = [
-           'Content-type' => 'application/json',
-           'Accept' => 'application/json',
-           'Authorization' => 'bearer ' . auth()->getToken(),
+            'Content-type' => 'application/json',
+            'Accept' => 'application/json',
+            'Authorization' => 'bearer ' . auth()->getToken(),
         ];
 
         $body = (new WebhookResource($this))->toArray(request());
         if ($this->exists)
-            $response = Http::withHeaders($headers)->put($url.'/'.$this->getKey(), $body);
+            $response = Http::withHeaders($headers)->put($url . '/' . $this->getKey(), $body);
         else
             $response = Http::withHeaders($headers)->post($url, $body);
 
         return (($response->status() >= 200) && ($response->status() <= 299));
-   }
+    }
 
-   public function delete()
-   {
-       $app = config('webhook.id_app');
-       if (!$app)
-           throw new \Exception('APP não informado.');
+    public function delete()
+    {
+        $app = config('webhook.id_app');
+        if (!$app)
+            throw new \Exception('APP não informado.');
 
-       $url = config('webhook.api_agpadmin');
-       if (!$url)
-           throw new \Exception('URL não informado.');
-       $url .= '/webhook';
+        $url = config('webhook.api_agpadmin');
+        if (!$url)
+            throw new \Exception('URL não informado.');
+        $url .= '/webhook';
 
-       if (!auth()->check())
-           throw new \Exception('USUARIO não logado.');
+        if (!auth()->check())
+            throw new \Exception('USUARIO não logado.');
 
-       $headers = [
-           'Content-type' => 'application/json',
-           'Accept' => 'application/json',
-           'Authorization' => 'bearer ' . auth()->getToken(),
-       ];
-       if ($this->exists) {
-           $response = Http::withHeaders($headers)->delete($url.'/'. $this->getKey());
-           return (($response->status() >= 200) && ($response->status() <= 299));
-       }
-       return false;
-   }
+        $headers = [
+            'Content-type' => 'application/json',
+            'Accept' => 'application/json',
+            'Authorization' => 'bearer ' . auth()->getToken(),
+        ];
+        if ($this->exists) {
+            $response = Http::withHeaders($headers)->delete($url . '/' . $this->getKey());
+            return (($response->status() >= 200) && ($response->status() <= 299));
+        }
+        return false;
+    }
 }

@@ -28,23 +28,27 @@ class WebhookRepository
         if (!$app)
             throw new \Exception('APP não informado.');
 
-        $adm_empresa_id = auth()->check()?auth()->user()->getAdmEmpresaId():$adm_empresa_id;
+        $adm_empresa_id = auth()->check() ? auth()->user()->getAdmEmpresaId() : $adm_empresa_id;
         if (!$adm_empresa_id)
             throw new \Exception('EMPRESA não informado.');
 
         $entidade = config('webhook.entidade');
-        if (!array_key_exists('webhook',$entidade) || !array_key_exists('webhook_evento',$entidade))
+        if (!$entidade)
             throw new \Exception('ENTIDADE não configurado.');
+        $entidade = [
+            'webhook' => $entidade,
+            'webhook_evento' => $entidade . '_evento',
+        ];
 
         return Webhook::query()
-            ->join($entidade['webhook_evento'],$entidade['webhook_evento'].'.adm_webhook_id','=',$entidade['webhook'].'.id')
+            ->join($entidade['webhook_evento'], $entidade['webhook_evento'] . '.adm_webhook_id', '=', $entidade['webhook'] . '.id')
             ->where([
-                $entidade['webhook'].'.situacao' => '1',
-                $entidade['webhook'].'.adm_empresa_id' => $adm_empresa_id,
-                $entidade['webhook'].'.adm_aplicativo_id' => $app,
+                $entidade['webhook'] . '.situacao' => '1',
+                $entidade['webhook'] . '.adm_empresa_id' => $adm_empresa_id,
+                $entidade['webhook'] . '.adm_aplicativo_id' => $app,
             ])
-            ->whereIn($entidade['webhook_evento'].'.evento',$eventos)
-            ->groupBy($entidade['webhook'].'.id')
+            ->whereIn($entidade['webhook_evento'] . '.evento', $eventos)
+            ->groupBy($entidade['webhook'] . '.id')
             ->select($entidade['webhook'].'.*')
             ->get();
     }

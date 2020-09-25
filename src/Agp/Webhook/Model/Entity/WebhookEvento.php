@@ -42,9 +42,16 @@ class WebhookEvento extends \Agp\BaseUtils\Model\Entity\BaseModel
         "webhook",
     ];
 
-   public function webhook()
-   {
-       return $this->belongsTo('Agp\Webhook\Model\Entity\Webhook', 'adm_webhook_id');
-   }
+    public function __construct(array $attributes = [])
+    {
+        $this->table = config('webhook.entidade') . '_evento';
+
+        parent::__construct($attributes);
+    }
+
+    public function webhook()
+    {
+        return $this->belongsTo('Agp\Webhook\Model\Entity\Webhook', 'adm_webhook_id');
+    }
 
 }
