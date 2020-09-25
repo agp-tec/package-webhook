@@ -26,7 +26,7 @@ class WebhookSender
                     throw new HttpException($response->getReasonPhrase(), $response->status());
             }
         } catch (\Throwable $throwable) {
-            LogJob::dispatch(new Log(5, 'Falha ao executar webhook: ' . substr($throwable->getMessage(), 0, 200), 'webhook'));
+            LogJob::dispatch(new Log(6, 'Falha ao executar webhook: ' . substr($throwable->getMessage(), 0, 200), 'webhook'));
         }
     }
 }
