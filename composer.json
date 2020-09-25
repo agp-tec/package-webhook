@@ -14,7 +14,7 @@
         "agp/log": "^1.0",
         "agp/base-utils": "^1.0"
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "dev-master",
     "prefer-stable": true,
     "autoload": {
         "psr-0": {
@@ -24,7 +24,7 @@
     "extra": {
         "laravel": {
             "providers": [
-              "AgpWebhookServiceProvider"
+                "AgpWebhookServiceProvider"
             ]
         }
     }
