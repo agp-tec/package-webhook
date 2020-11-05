@@ -10,6 +10,7 @@
 namespace Agp\Webhook\Model\Entity;
 
 
+use Agp\Webhook\Model\Resource\WebhookResource;
 use Illuminate\Support\Facades\Http;
 
 
@@ -73,7 +74,6 @@ class Webhook extends \Agp\BaseUtils\Model\Entity\BaseModel
 
     public function save(array $options = [])
     {
-        //TODO Testar
         $app = config('webhook.id_app');
         if (!$app)
             throw new \Exception('APP não informado.');
@@ -110,7 +110,6 @@ class Webhook extends \Agp\BaseUtils\Model\Entity\BaseModel
 
     public function delete()
     {
-        //TODO Testar
         $app = config('webhook.id_app');
         if (!$app)
             throw new \Exception('APP não informado.');
