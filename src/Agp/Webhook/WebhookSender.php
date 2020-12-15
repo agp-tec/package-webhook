@@ -20,13 +20,21 @@ class WebhookSender
     {
         try {
             $webhook = (new WebhookRepository)->getById($webhookId);
-            if ($webhook) {
+            if ($webhook)
                 $response = Http::post($webhook->url, $data);
-                if (($response->status() < 200) || ($response->status() > 299))
-                    throw new HttpException($response->getReasonPhrase(), $response->status());
-            }
         } catch (\Throwable $throwable) {
-            LogJob::dispatch(new Log(6, 'Falha ao executar webhook: ' . substr($throwable->getMessage(), 0, 200), 'webhook'));
+            LogJob::dispatch(new Log(6, 'Falha ao executar webhook[' . $webhookId . ']: ' . substr($throwable->getMessage(), 0, 200)));
+            throw $throwable;
+        }
+        if ($webhook) {
+            if (($response->status() < 200) || ($response->status() > 299)) {
+                $arr = [
+                    'message' => 'Falha ao executar webhook[' . $webhookId . ']: ' . $response->status(),
+                    'errors' => $response->body()
+                ];
+                LogJob::dispatch(new Log(6, json_encode($arr)));
+                throw new HttpException($response->getReasonPhrase(), $response->status());
+            }
         }
     }
 }
