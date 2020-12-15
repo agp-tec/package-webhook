@@ -7,7 +7,7 @@ namespace Agp\Webhook;
 use Agp\Log\Jobs\LogJob;
 use Agp\Log\Log;
 use Agp\Webhook\Model\Repository\WebhookRepository;
-use HttpException;
+use Exception;
 use Illuminate\Support\Facades\Http;
 
 class WebhookSender
@@ -33,7 +33,7 @@ class WebhookSender
                     'errors' => $response->body()
                 ];
                 LogJob::dispatch(new Log(6, json_encode($arr)));
-                throw new HttpException($response->getReasonPhrase(), $response->status());
+                throw new Exception($response->getReasonPhrase());
             }
         }
     }
